@@ -16,16 +16,34 @@ public class Eloise {
         System.out.println(line);
 
     }
+
+    private static void requireEntry(String s, String error) {
+        if (s == null || s.trim().isEmpty()) {
+            throw new IllegalArgumentException(error);
+        }
+    }
+
+    private static void addedMsg(Task t) {
+        msgBox(" Got it. I've added this task:\n"
+                + " " + t + "\n"
+                + "Now you have " + items.size() + " tasks in the list." );
+    }
+
+
     public static void main(String[] args) {
         msgBox("""
-                Hello, I'm Eloise! 
-                What can I do for you today?""");
+                Hello, I'm Eloise! Your favourite productivity bot!
+                For Todo: enter "todo <task>"
+                For Deadline: enter "deadline <task> /by <date/time>"
+                For Event: enter "event <task> /from <date/time> /to <date/time>"
+                """);
 
         //checks for input
         Scanner sc = new Scanner(System.in);
 
         while (sc.hasNextLine()) {
             String userInput = sc.nextLine().trim();
+            String lower = userInput.toLowerCase();
             //gives the actual input
             if (userInput.equalsIgnoreCase("bye")) {
                 msgBox("Bye! Hope to see you again!");
@@ -43,10 +61,37 @@ public class Eloise {
                     }
                     msgBox(list.toString().stripTrailing());
                 }
-            } else if (userInput.toLowerCase().startsWith("mark")) {
+            } else if (lower.startsWith("mark")) {
                 handleMark(userInput, true);
-            } else if (userInput.toLowerCase().startsWith("unmark")) {
+            } else if (lower.startsWith("unmark")) {
                 handleMark(userInput, false);
+            } else if (lower.startsWith("todo ")) {
+                String taskDesc = userInput.substring(5).trim();
+                Task t = new ToDo(taskDesc);
+                items.add(t);
+                addedMsg(t);
+            } else if (lower.startsWith("deadline ")) {
+                String s = userInput.substring(9).trim();
+                String[] parts = s.split("/by", 2);
+                String taskDesc = parts[0].trim();
+                String date =  parts[1].trim();
+                Task t = new Deadline(taskDesc, date);
+                items.add(t);
+                addedMsg(t);
+            } else if (lower.startsWith("event ")) {
+                String s = userInput.substring(6).trim();
+                String[] splitFrom = s.split("/from", 2);
+
+                String taskDesc = splitFrom[0].trim();
+                String rest =  splitFrom[1].trim();
+
+                String[] splitTo = rest.split("/to", 2);
+                String from = splitTo[0].trim();
+                String to = splitTo[1].trim();
+
+                Task t = new Event(taskDesc, from, to);
+                items.add(t);
+                addedMsg(t);
             } else if (!userInput.isBlank()) {
                 items.add(new Task(userInput));
                 msgBox("added: " + userInput);
