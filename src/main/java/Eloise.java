@@ -24,7 +24,13 @@ public class Eloise {
 //    }
 
     private static void addedMsg(Task t) {
-        msgBox(" Got it. I've added this task:\n"
+        msgBox("Got it. I've added this task:\n"
+                + " " + t + "\n"
+                + "Now you have " + items.size() + " tasks in the list." );
+    }
+
+    private static void removedMsg(Task t) {
+        msgBox("No problem! I have removed:\n"
                 + " " + t + "\n"
                 + "Now you have " + items.size() + " tasks in the list." );
     }
@@ -105,6 +111,11 @@ public class Eloise {
 
         if (lower.startsWith("event")) {
             handleEvent(userInput);
+            return;
+        }
+
+        if (lower.startsWith("delete")) {
+            handleDelete(userInput);
             return;
         }
 
@@ -198,6 +209,23 @@ public class Eloise {
                 t.unmark();
                 msgBox("OK, I've marked this task as not done yet:\n " + t);
             }
+        } catch (NumberFormatException e) {
+            throw new InvalidIndexException("Not a valid task number", items.size());
+        }
+    }
+
+    private static void handleDelete(String userInput) throws EloiseException{
+        String taskIdx = splitAtCommand(userInput, "delete");
+
+        try {
+            int index = Integer.parseInt(taskIdx) - 1;
+            if (index < 0 || index >= items.size()) {
+                throw new InvalidIndexException("Task number out of range", items.size());
+            }
+
+            Task removed = items.remove(index);
+            removedMsg(removed);
+
         } catch (NumberFormatException e) {
             throw new InvalidIndexException("Not a valid task number", items.size());
         }
