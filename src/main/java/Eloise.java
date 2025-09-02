@@ -6,36 +6,14 @@ public class Eloise {
 
     private static final String line  = "_".repeat(50);
     private static final List<Task> items = new ArrayList<>();
-
-    private static void msgBox(String msg) {
-        System.out.println(line);
-        //check if there is any next line, then add the indent, \\R matches all line endings
-        for (String line: msg.split("\\R")) {
-            System.out.println(" " + line);
-        }
-        System.out.println(line);
-
-    }
-
-//    private static void requireEntry(String s, String error) {
-//        if (s == null || s.trim().isEmpty()) {
-//            throw new IllegalArgumentException(error);
-//        }
-//    }
-
-    private static void addedMsg(Task t) {
-        msgBox("Got it. I've added this task:\n"
-                + " " + t + "\n"
-                + "Now you have " + items.size() + " tasks in the list." );
-    }
-
-    private static void removedMsg(Task t) {
-        msgBox("No problem! I have removed:\n"
-                + " " + t + "\n"
-                + "Now you have " + items.size() + " tasks in the list." );
-    }
+    private static final Storage storage = new Storage();
 
 
+    /**
+     * Entry point for program. Greets users, loads previously stored tasks,
+     * continuously reads user inputs until exit.
+     * @param args (not used)
+     */
     public static void main(String[] args) {
         msgBox("""
                 Hello, I'm Eloise! Your favourite productivity bot!
@@ -47,6 +25,8 @@ public class Eloise {
         //checks for input
         Scanner sc = new Scanner(System.in);
 
+        items.addAll(storage.load());
+
         while (sc.hasNextLine()) {
             String userInput = sc.nextLine().trim();
 
@@ -57,13 +37,15 @@ public class Eloise {
             } catch (EloiseException e) {
                 msgBox(e.getMessage());
             }
-
         }
-
     }
 
-    //separate out all logic from main
 
+    /**
+     * Parses command and executes it
+     * @param userInput raw command entered by users.
+     * @throws EloiseException if command is unknown or malformed
+     */
     private static void handleInput(String userInput) throws EloiseException{
         String lower = userInput.toLowerCase();
         //gives the actual input
@@ -124,14 +106,25 @@ public class Eloise {
     }
 
 
+    /**
+     * Handles command by creating a new Todo task
+     * @param userInput user inputs that begins with "todo"
+     * @throws EloiseException if description is missing
+     */
     private static void handleToDo(String userInput) throws EloiseException{
         String taskDesc = splitAtCommand(userInput, "todo");
         Task t = new ToDo(taskDesc);
         items.add(t);
+        storage.save(items);
         addedMsg(t);
     }
 
 
+    /**
+     * Handles command by creating a new Deadline task
+     * @param userInput user inputs that begins with "deadline"
+     * @throws EloiseException if description is missing or {@code /by} argument is missing
+     */
     private static void handleDeadline(String userInput) throws EloiseException{
         String taskDesc = splitAtCommand(userInput, "deadline");
         String[] parts = taskDesc.split("/by", 2);
@@ -148,9 +141,16 @@ public class Eloise {
         }
         Task t = new Deadline(task, date);
         items.add(t);
+        storage.save(items);
         addedMsg(t);
     }
 
+    /**
+     * Handles command by creating a new Event task
+     * @param userInput user inputs that begins with "event"
+     * @throws EloiseException if description, or {@code /from}, or {@code /to}
+     * arguments are missing
+     */
     private static void handleEvent(String userInput) throws EloiseException {
         String taskDesc = splitAtCommand(userInput, "event");
         String[] splitFrom = taskDesc.split("/from", 2);
@@ -185,9 +185,18 @@ public class Eloise {
 
         Task t = new Event(task, from, to);
         items.add(t);
+        storage.save(items);
         addedMsg(t);
     }
 
+
+    /**
+     * Handles mark and unmark commands by updating the
+     * completion status of the task at given index.
+     * @param userInput user inputs that consist of "mark" or "unmark" (eg. "mark 1")
+     * @param mark true to mark as done, false to unmark as not done
+     * @throws EloiseException if index is missing or out of range
+     */
     private static void handleMark(String userInput, boolean mark) throws EloiseException{
         String [] parts = userInput.split("\\s+", 2);
         //splits the string into command and task no.
@@ -204,9 +213,11 @@ public class Eloise {
             Task t = items.get(index-1);
             if (mark) {
                 t.mark();
+                storage.save(items);
                 msgBox("Nice! I've marked this task as done:\n " + t);
             } else {
                 t.unmark();
+                storage.save(items);
                 msgBox("OK, I've marked this task as not done yet:\n " + t);
             }
         } catch (NumberFormatException e) {
@@ -214,6 +225,11 @@ public class Eloise {
         }
     }
 
+    /**
+     * Handles command by deleting task at given index.
+     * @param userInput user inputs that begins with "delete"
+     * @throws EloiseException if index is missing or out of range
+     */
     private static void handleDelete(String userInput) throws EloiseException{
         String taskIdx = splitAtCommand(userInput, "delete");
 
@@ -224,6 +240,7 @@ public class Eloise {
             }
 
             Task removed = items.remove(index);
+            storage.save(items);
             removedMsg(removed);
 
         } catch (NumberFormatException e) {
@@ -231,11 +248,55 @@ public class Eloise {
         }
     }
 
+    /**
+     * Splits user input into its command and remaining description.
+     * @param userInput full command string
+     * @param cmd command keyword (eg. "todo", "deadline")
+     * @return remaining description after command
+     * @throws EmptyDescriptionException if no description follows after command
+     */
     private static String splitAtCommand(String userInput, String cmd) throws EmptyDescriptionException{
         String [] parts = userInput.split("\\s+", 2);
         if (parts.length < 2 || parts[1].trim().isEmpty()) {
             throw new EmptyDescriptionException(cmd);
         }
         return parts[1].trim();
+    }
+
+    /**
+     * Prints message that is surrounded by horizontal lines,
+     * indents each line of text for better readability
+     * @param msg message to be displayed
+     */
+    private static void msgBox(String msg) {
+        System.out.println(line);
+        //check if there is any next line, then add the indent, \\R matches all line endings
+        for (String line: msg.split("\\R")) {
+            System.out.println(" " + line);
+        }
+        System.out.println(line);
+
+    }
+
+    /**
+     * Prints confirmation message after task has been added,
+     * shows added task and updated list size
+     * @param t task that is added
+     */
+    private static void addedMsg(Task t) {
+        msgBox("Got it. I've added this task:\n"
+                + " " + t + "\n"
+                + "Now you have " + items.size() + " tasks in the list." );
+    }
+
+    /**
+     * Prints confirmation message after task has been deleted,
+     * shows removed task and updated list size
+     * @param t task that is removed
+     */
+    private static void removedMsg(Task t) {
+        msgBox("No problem! I have removed:\n"
+                + " " + t + "\n"
+                + "Now you have " + items.size() + " tasks in the list." );
     }
 }
