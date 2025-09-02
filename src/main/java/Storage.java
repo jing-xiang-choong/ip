@@ -44,11 +44,12 @@ public final class Storage {
     }
 
     /**
-     * Saves tasks into {@code dataFile}.
-     * <p>Each line is parsed via {@link #parseStrLenient(String)} into a {@link Task}.
-     * Malformed lines are skipped. If the file does not exist, an empty list is returned.</p>
+     * Writes all tasks to {@code dataFile}, overwriting existing content.
+     * <p>Each task is converted to String via {@link Task#toFileString()}.
+     * Ensures the parent directory exists before writing. If an I/O error occurs, the
+     * error is logged and the method returns without persisting changes.</p>
      *
-     * @return a mutable list of loaded tasks; never {@code null}
+     * @param tasks the list of tasks to persist; must not be {@code null}
      */
     public void save(List<Task> tasks ) {
         //check for datafile directory, if not create it
