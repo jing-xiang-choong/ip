@@ -6,34 +6,8 @@ public class Eloise {
 
     private static final String line  = "_".repeat(50);
     private static final List<Task> items = new ArrayList<>();
+    private static final Storage storage = new Storage();
 
-    private static void msgBox(String msg) {
-        System.out.println(line);
-        //check if there is any next line, then add the indent, \\R matches all line endings
-        for (String line: msg.split("\\R")) {
-            System.out.println(" " + line);
-        }
-        System.out.println(line);
-
-    }
-
-//    private static void requireEntry(String s, String error) {
-//        if (s == null || s.trim().isEmpty()) {
-//            throw new IllegalArgumentException(error);
-//        }
-//    }
-
-    private static void addedMsg(Task t) {
-        msgBox("Got it. I've added this task:\n"
-                + " " + t + "\n"
-                + "Now you have " + items.size() + " tasks in the list." );
-    }
-
-    private static void removedMsg(Task t) {
-        msgBox("No problem! I have removed:\n"
-                + " " + t + "\n"
-                + "Now you have " + items.size() + " tasks in the list." );
-    }
 
 
     public static void main(String[] args) {
@@ -47,6 +21,8 @@ public class Eloise {
         //checks for input
         Scanner sc = new Scanner(System.in);
 
+        items.addAll(storage.load());
+
         while (sc.hasNextLine()) {
             String userInput = sc.nextLine().trim();
 
@@ -57,9 +33,7 @@ public class Eloise {
             } catch (EloiseException e) {
                 msgBox(e.getMessage());
             }
-
         }
-
     }
 
     //separate out all logic from main
@@ -128,6 +102,7 @@ public class Eloise {
         String taskDesc = splitAtCommand(userInput, "todo");
         Task t = new ToDo(taskDesc);
         items.add(t);
+        storage.save(items);
         addedMsg(t);
     }
 
@@ -148,6 +123,7 @@ public class Eloise {
         }
         Task t = new Deadline(task, date);
         items.add(t);
+        storage.save(items);
         addedMsg(t);
     }
 
@@ -185,6 +161,7 @@ public class Eloise {
 
         Task t = new Event(task, from, to);
         items.add(t);
+        storage.save(items);
         addedMsg(t);
     }
 
@@ -204,9 +181,11 @@ public class Eloise {
             Task t = items.get(index-1);
             if (mark) {
                 t.mark();
+                storage.save(items);
                 msgBox("Nice! I've marked this task as done:\n " + t);
             } else {
                 t.unmark();
+                storage.save(items);
                 msgBox("OK, I've marked this task as not done yet:\n " + t);
             }
         } catch (NumberFormatException e) {
@@ -224,6 +203,7 @@ public class Eloise {
             }
 
             Task removed = items.remove(index);
+            storage.save(items);
             removedMsg(removed);
 
         } catch (NumberFormatException e) {
@@ -237,5 +217,27 @@ public class Eloise {
             throw new EmptyDescriptionException(cmd);
         }
         return parts[1].trim();
+    }
+
+    private static void msgBox(String msg) {
+        System.out.println(line);
+        //check if there is any next line, then add the indent, \\R matches all line endings
+        for (String line: msg.split("\\R")) {
+            System.out.println(" " + line);
+        }
+        System.out.println(line);
+
+    }
+
+    private static void addedMsg(Task t) {
+        msgBox("Got it. I've added this task:\n"
+                + " " + t + "\n"
+                + "Now you have " + items.size() + " tasks in the list." );
+    }
+
+    private static void removedMsg(Task t) {
+        msgBox("No problem! I have removed:\n"
+                + " " + t + "\n"
+                + "Now you have " + items.size() + " tasks in the list." );
     }
 }
