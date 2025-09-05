@@ -3,7 +3,9 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Scanner;
 import java.util.List;
 
@@ -93,12 +95,15 @@ public final class Storage {
                     break;
                 case "D":
                     String by = parts[3];
-                    t = new Deadline(desc, by);
+                    DateParser.Result r = DateParser.parser(by);
+                    t = new Deadline(desc, r.dateTime, r.hasTime);
                     break;
                 case "E":
                     String from = parts[3];
                     String to = parts[4];
-                    t = new Event(desc, from, to);
+                    DateParser.Result r1 = DateParser.parser(from);
+                    DateParser.Result r2 = DateParser.parser(to);
+                    t = new Event(desc, r1.dateTime, r2.dateTime, r1.hasTime, r2.hasTime);
                 default:
                     System.err.println("I don't know this task type: " + taskType);
                     return null;
@@ -112,6 +117,8 @@ public final class Storage {
             return null;
         }
     }
+
+
 
 
 }

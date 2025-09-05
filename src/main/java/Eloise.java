@@ -129,7 +129,7 @@ public class Eloise {
         String taskDesc = splitAtCommand(userInput, "deadline");
         String[] parts = taskDesc.split("/by", 2);
         if (parts.length < 2) {
-            throw new MissingArgumentException("'/by <when>'", "/by Sunday");
+            throw new MissingArgumentException("'/by <when>'", "/by 2/9/2025");
         }
         String task = parts[0].trim();
         String date =  parts[1].trim();
@@ -137,9 +137,12 @@ public class Eloise {
             throw new EmptyDescriptionException("deadline");
         }
         if (date.isEmpty()) {
-            throw new MissingArgumentException("'/by <when>'", "/by Sunday");
+            throw new MissingArgumentException("'/by <when>'", "/by 2/9/2025");
         }
-        Task t = new Deadline(task, date);
+
+        DateParser.Result r = DateParser.parser(date);
+
+        Task t = new Deadline(task, r.dateTime, r.hasTime);
         items.add(t);
         storage.save(items);
         addedMsg(t);
@@ -157,7 +160,7 @@ public class Eloise {
 
         if (splitFrom.length < 2) {
             throw new MissingArgumentException("'/from <start> /to <end>'"
-                                                , "/from Sunday 2pm /to 4pm");
+                                                , "/from 2/9/2025 1800 /to 2/9/2025 1900");
         }
 
         String task = splitFrom[0].trim();
@@ -166,7 +169,7 @@ public class Eloise {
         String[] splitTo = rest.split("/to", 2);
         if (splitTo.length < 2) {
             throw new MissingArgumentException("'/to <end>'"
-                                                , "/to 4pm");
+                                                , "/to 2/9/2025 1900");
         }
         String from = splitTo[0].trim();
         String to = splitTo[1].trim();
@@ -176,14 +179,17 @@ public class Eloise {
         }
         if (from.isEmpty()) {
             throw new MissingArgumentException("'/from <start>'"
-                                                , "/from 4pm");
+                                                , "/from 2/9/2025 1800");
         }
         if (to.isEmpty()) {
             throw new MissingArgumentException("'/to <end>'"
-                                                , "/to 4pm");
+                                                , "/to 2/9/2025 1900");
         }
 
-        Task t = new Event(task, from, to);
+        DateParser.Result r1 = DateParser.parser(from);
+        DateParser.Result r2 = DateParser.parser(to);
+
+        Task t = new Event(task, r1.dateTime, r2.dateTime, r1.hasTime, r2.hasTime);
         items.add(t);
         storage.save(items);
         addedMsg(t);
@@ -297,6 +303,6 @@ public class Eloise {
     private static void removedMsg(Task t) {
         msgBox("No problem! I have removed:\n"
                 + " " + t + "\n"
-                + "Now you have " + items.size() + " tasks in the list." );
+                + "Now you have " + items.size() + " tasks in the list.");
     }
 }
