@@ -1,11 +1,8 @@
-import java.util.Scanner;
-
-
 public class Eloise {
 
-    private static final String line  = "_".repeat(50);
     private static final TaskList tasks = new TaskList();
     private static final Storage storage = new Storage();
+    private static final Ui ui = new Ui();
 
 
     /**
@@ -14,34 +11,27 @@ public class Eloise {
      * @param args (not used)
      */
     public static void main(String[] args) {
-        msgBox("""
-                Hello, I'm Eloise! Your favourite productivity bot!
-                For Todo: enter "todo <task>"
-                For Deadline: enter "deadline <task> /by <date/time>"
-                For Event: enter "event <task> /from <date/time> /to <date/time>"
-                """);
+        ui.showWelcome();
 
-        //checks for input
-        Scanner sc = new Scanner(System.in);
 
         try {
             int added = tasks.addAll(storage.load());
             if (added > 0) {
-                msgBox("Loaded " + added + " tasks from your previous session.");
+                ui.showMessage("Loaded " + added + " tasks from your previous session.");
             }
         } catch (EloiseException e) {
-            msgBox(e.getMessage());
+            ui.showMessage(e.getMessage());
         }
 
-        while (sc.hasNextLine()) {
-            String userInput = sc.nextLine().trim();
-
-            if(userInput.isEmpty()) continue;
+        while (true) {
+            String userInput = ui.readInput();
+            if (userInput == null) break;
+            if (userInput.isEmpty()) continue;
 
             try {
                 handleInput(userInput);
             } catch (EloiseException e) {
-                msgBox(e.getMessage());
+                ui.showMessage(e.getMessage());
             }
         }
     }
@@ -56,17 +46,13 @@ public class Eloise {
         String lower = userInput.toLowerCase();
         //gives the actual input
         if (lower.equals("bye")) {
-            msgBox("Bye! Hope to see you again!");
+            ui.showExit();
             System.exit(0);
             return;
         }
 
         if (lower.equals("list")) {
-            if (tasks.isEmpty()) {
-                msgBox("No items added yet.");
-            } else {
-                msgBox(tasks.toString());
-            }
+            ui.showList(tasks.isEmpty() ? null : tasks.toString());
             return;
         }
 
@@ -113,7 +99,7 @@ public class Eloise {
     private static void handleToDo(String userInput) throws EloiseException{
         String taskDesc = splitAtCommand(userInput, "todo");
         Task t = new ToDo(taskDesc);
-        addedMsg(tasks.addTask(t));
+        ui.showAdded(tasks.addTask(t), tasks.size());
         storage.save(tasks.getAll());
     }
 
@@ -142,7 +128,7 @@ public class Eloise {
         DateParser.Result r = DateParser.parser(date);
 
         Task t = new Deadline(task, r.dateTime, r.hasTime);
-        addedMsg(tasks.addTask(t));
+        ui.showAdded(tasks.addTask(t), tasks.size());
         storage.save(tasks.getAll());
     }
 
@@ -188,7 +174,7 @@ public class Eloise {
         DateParser.Result r2 = DateParser.parser(to);
 
         Task t = new Event(task, r1.dateTime, r2.dateTime, r1.hasTime, r2.hasTime);
-        addedMsg(tasks.addTask(t));
+        ui.showAdded(tasks.addTask(t), tasks.size());
         storage.save(tasks.getAll());
 
     }
@@ -213,9 +199,7 @@ public class Eloise {
             int index = Integer.parseInt(parts[1]);
             Task t = mark ? tasks.mark(index) : tasks.unmark(index);
             storage.save(tasks.getAll());
-            msgBox((mark
-                    ? "Nice! I've marked this task as done:\n "
-                    : "OK, I've marked this task as not done yet:\n ") + t);
+            ui.showMark(t, mark);
         } catch (NumberFormatException e) {
             throw new InvalidIndexException("Not a valid task number", tasks.size());
         }
@@ -231,7 +215,7 @@ public class Eloise {
 
         try {
             int index = Integer.parseInt(taskIdx);
-            removedMsg(tasks.delete(index));
+            ui.showRemoved(tasks.delete(index), tasks.size());
             storage.save(tasks.getAll());
 
         } catch (NumberFormatException e) {
@@ -254,40 +238,4 @@ public class Eloise {
         return parts[1].trim();
     }
 
-    /**
-     * Prints message that is surrounded by horizontal lines,
-     * indents each line of text for better readability
-     * @param msg message to be displayed
-     */
-    private static void msgBox(String msg) {
-        System.out.println(line);
-        //check if there is any next line, then add the indent, \\R matches all line endings
-        for (String line: msg.split("\\R")) {
-            System.out.println(" " + line);
-        }
-        System.out.println(line);
-
-    }
-
-    /**
-     * Prints confirmation message after task has been added,
-     * shows added task and updated list size
-     * @param t task that is added
-     */
-    private static void addedMsg(Task t) {
-        msgBox("Got it. I've added this task:\n"
-                + " " + t + "\n"
-                + "Now you have " + tasks.size() + " tasks in the list." );
-    }
-
-    /**
-     * Prints confirmation message after task has been deleted,
-     * shows removed task and updated list size
-     * @param t task that is removed
-     */
-    private static void removedMsg(Task t) {
-        msgBox("No problem! I have removed:\n"
-                + " " + t + "\n"
-                + "Now you have " + tasks.size() + " tasks in the list.");
-    }
 }
