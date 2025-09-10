@@ -1,11 +1,10 @@
-import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.List;
+
 
 public class Eloise {
 
     private static final String line  = "_".repeat(50);
-    private static final List<Task> items = new ArrayList<>();
+    private static final TaskList tasks = new TaskList();
     private static final Storage storage = new Storage();
 
 
@@ -25,7 +24,14 @@ public class Eloise {
         //checks for input
         Scanner sc = new Scanner(System.in);
 
-        items.addAll(storage.load());
+        try {
+            int added = tasks.addAll(storage.load());
+            if (added > 0) {
+                msgBox("Loaded " + added + " tasks from your previous session.");
+            }
+        } catch (EloiseException e) {
+            msgBox(e.getMessage());
+        }
 
         while (sc.hasNextLine()) {
             String userInput = sc.nextLine().trim();
@@ -56,17 +62,10 @@ public class Eloise {
         }
 
         if (lower.equals("list")) {
-            if (items.isEmpty()) {
+            if (tasks.isEmpty()) {
                 msgBox("No items added yet.");
             } else {
-                StringBuilder list = new StringBuilder();
-                for (int i = 0; i < items.size(); i++) {
-                    list.append(i + 1).append(". ")
-                            .append(items.get(i))
-                            .append(System.lineSeparator());
-                    //appends number with item then next line, using lineSeparator is better than \n
-                }
-                msgBox(list.toString().stripTrailing());
+                msgBox(tasks.toString());
             }
             return;
         }
@@ -114,9 +113,8 @@ public class Eloise {
     private static void handleToDo(String userInput) throws EloiseException{
         String taskDesc = splitAtCommand(userInput, "todo");
         Task t = new ToDo(taskDesc);
-        items.add(t);
-        storage.save(items);
-        addedMsg(t);
+        addedMsg(tasks.addTask(t));
+        storage.save(tasks.getAll());
     }
 
 
@@ -140,12 +138,12 @@ public class Eloise {
             throw new MissingArgumentException("'/by <when>'", "/by 2/9/2025");
         }
 
+
         DateParser.Result r = DateParser.parser(date);
 
         Task t = new Deadline(task, r.dateTime, r.hasTime);
-        items.add(t);
-        storage.save(items);
-        addedMsg(t);
+        addedMsg(tasks.addTask(t));
+        storage.save(tasks.getAll());
     }
 
     /**
@@ -190,16 +188,16 @@ public class Eloise {
         DateParser.Result r2 = DateParser.parser(to);
 
         Task t = new Event(task, r1.dateTime, r2.dateTime, r1.hasTime, r2.hasTime);
-        items.add(t);
-        storage.save(items);
-        addedMsg(t);
+        addedMsg(tasks.addTask(t));
+        storage.save(tasks.getAll());
+
     }
 
 
     /**
      * Handles mark and unmark commands by updating the
      * completion status of the task at given index.
-     * @param userInput user inputs that consist of "mark" or "unmark" (eg. "mark 1")
+     * @param userInput user inputs that consist of "mark" or "unmark" (eg: "mark 1")
      * @param mark true to mark as done, false to unmark as not done
      * @throws EloiseException if index is missing or out of range
      */
@@ -213,21 +211,13 @@ public class Eloise {
 
         try {
             int index = Integer.parseInt(parts[1]);
-            if (index < 1 || index > items.size()) {
-                throw new InvalidIndexException("Task number out of range", items.size());
-            }
-            Task t = items.get(index-1);
-            if (mark) {
-                t.mark();
-                storage.save(items);
-                msgBox("Nice! I've marked this task as done:\n " + t);
-            } else {
-                t.unmark();
-                storage.save(items);
-                msgBox("OK, I've marked this task as not done yet:\n " + t);
-            }
+            Task t = mark ? tasks.mark(index) : tasks.unmark(index);
+            storage.save(tasks.getAll());
+            msgBox((mark
+                    ? "Nice! I've marked this task as done:\n "
+                    : "OK, I've marked this task as not done yet:\n ") + t);
         } catch (NumberFormatException e) {
-            throw new InvalidIndexException("Not a valid task number", items.size());
+            throw new InvalidIndexException("Not a valid task number", tasks.size());
         }
     }
 
@@ -240,17 +230,12 @@ public class Eloise {
         String taskIdx = splitAtCommand(userInput, "delete");
 
         try {
-            int index = Integer.parseInt(taskIdx) - 1;
-            if (index < 0 || index >= items.size()) {
-                throw new InvalidIndexException("Task number out of range", items.size());
-            }
-
-            Task removed = items.remove(index);
-            storage.save(items);
-            removedMsg(removed);
+            int index = Integer.parseInt(taskIdx);
+            removedMsg(tasks.delete(index));
+            storage.save(tasks.getAll());
 
         } catch (NumberFormatException e) {
-            throw new InvalidIndexException("Not a valid task number", items.size());
+            throw new InvalidIndexException("Not a valid task number", tasks.size());
         }
     }
 
@@ -292,7 +277,7 @@ public class Eloise {
     private static void addedMsg(Task t) {
         msgBox("Got it. I've added this task:\n"
                 + " " + t + "\n"
-                + "Now you have " + items.size() + " tasks in the list." );
+                + "Now you have " + tasks.size() + " tasks in the list." );
     }
 
     /**
@@ -303,6 +288,6 @@ public class Eloise {
     private static void removedMsg(Task t) {
         msgBox("No problem! I have removed:\n"
                 + " " + t + "\n"
-                + "Now you have " + items.size() + " tasks in the list.");
+                + "Now you have " + tasks.size() + " tasks in the list.");
     }
 }

@@ -104,6 +104,7 @@ public final class Storage {
                     DateParser.Result r1 = DateParser.parser(from);
                     DateParser.Result r2 = DateParser.parser(to);
                     t = new Event(desc, r1.dateTime, r2.dateTime, r1.hasTime, r2.hasTime);
+                    break;
                 default:
                     System.err.println("I don't know this task type: " + taskType);
                     return null;

@@ -38,7 +38,7 @@ public class DateParser {
             DateTimeFormatter.ofPattern("d/M/yyyy HHmm")
     );
 
-    public static Result parser(String userInput){
+    public static Result parser(String userInput) throws EloiseException{
         String trimInput = userInput.trim();
 
         for (DateTimeFormatter f : DATE_TIME) {
@@ -59,8 +59,8 @@ public class DateParser {
             }
         }
 
-        throw new IllegalArgumentException("Invalid date/time input: " + trimInput
-        + "\nTry these formats: 2025-09-02, 2025-09-02 1800, 2/9/2025, 2/9/2025 1800");
+        throw new EloiseException("Invalid date/time input: " + trimInput
+                + "\nTry these formats: 2025-09-02, 2025-09-02 1800, 2/9/2025, 2/9/2025 1800");
     }
 
 

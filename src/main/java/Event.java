@@ -52,7 +52,8 @@ public class Event extends Task{
         String fromStr = hasStartTime ? from.format(SAVE_DT) : from.format(SAVE_DATE);
         String toStr = hasEndTime ? to.format(SAVE_DT) : to.format(SAVE_DATE);
 
-        return String.join("|", "E", description,
+        return String.join("|", "E", doneFlag(),
+                description,
                 fromStr,
                 toStr,
                 Boolean.toString(hasStartTime),
