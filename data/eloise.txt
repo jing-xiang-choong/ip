@@ -1,3 +1,4 @@
-T|0|play ow
 D|0|eat tenderbest|2025-09-02 1800|true
 E|0|internals|2025-09-10 1800|2025-09-11 1800|true|true
+T|0|finish this increment
+E|0|internals|2025-09-12|2025-09-12|false|false
