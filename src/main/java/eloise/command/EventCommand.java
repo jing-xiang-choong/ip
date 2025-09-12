@@ -1,3 +1,17 @@
+package eloise.command;
+
+import eloise.task.TaskList;
+import eloise.task.Task;
+import eloise.task.Event;
+import eloise.ui.Ui;
+import eloise.storage.Storage;
+import eloise.exception.EloiseException;
+import eloise.exception.MissingArgumentException;
+import eloise.exception.EmptyDescriptionException;
+import eloise.parser.Parser;
+import eloise.parser.DateParser;
+
+
 public class EventCommand implements Command {
     private final String userInput;
 

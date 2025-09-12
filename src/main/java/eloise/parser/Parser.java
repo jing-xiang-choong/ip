@@ -1,3 +1,12 @@
+package eloise.parser;
+
+import eloise.exception.EloiseException;
+import eloise.exception.EmptyDescriptionException;
+import eloise.exception.UnknownCommandException;
+import eloise.command.*;
+
+
+
 public class Parser {
 
     public static String splitAtCommand(String userInput, String cmd) throws EmptyDescriptionException{

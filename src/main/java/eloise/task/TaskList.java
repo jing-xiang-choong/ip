@@ -1,6 +1,10 @@
+package eloise.task;
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
+import eloise.exception.EloiseException;
+import eloise.exception.InvalidIndexException;
 
 public class TaskList{
     private final List<Task> tasks;

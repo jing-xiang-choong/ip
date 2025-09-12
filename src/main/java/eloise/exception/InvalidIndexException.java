@@ -1,3 +1,5 @@
+package eloise.exception;
+
 public class InvalidIndexException extends EloiseException{
     public InvalidIndexException(String missing) {
         super("Invalid input: " + missing);

@@ -1,3 +1,12 @@
+package eloise;
+
+import eloise.command.Command;
+import eloise.parser.Parser;
+import eloise.storage.Storage;
+import eloise.task.TaskList;
+import eloise.ui.Ui;
+import eloise.exception.EloiseException;
+
 public class Eloise {
 
     private static final TaskList tasks = new TaskList();

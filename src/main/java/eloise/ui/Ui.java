@@ -1,5 +1,8 @@
+package eloise.ui;
+
 import java.util.Scanner;
 import java.io.PrintStream;
+import eloise.task.Task;
 
 public class Ui {
     private static final String line  = "_".repeat(50);

@@ -1,3 +1,5 @@
+package eloise.task;
+
 abstract public class Task {
     protected String description;
     protected boolean isDone;
@@ -28,5 +30,5 @@ abstract public class Task {
         return "[" + getStatusIcon() + "] " + description;
     }
 
-    abstract String toFileString();
+    public abstract String toFileString();
 }
