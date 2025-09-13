@@ -17,6 +17,8 @@ abstract public class Task {
         this.isDone = false;
     }
 
+    public boolean getIsDone() { return this.isDone; }
+
     public String doneFlag() {
         return isDone ? "1" : "0";
     }
