@@ -3,6 +3,12 @@ package eloise.task;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Represents a task with specific start and end time.
+ * <p>
+ * {@code Event} stores task description, start and end time.
+ * The start and end times can have specific time or just the date.
+ */
 public class Event extends Task{
 
     private final LocalDateTime from;
@@ -17,6 +23,17 @@ public class Event extends Task{
     private static final DateTimeFormatter SAVE_DATE = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final DateTimeFormatter SAVE_DT = DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
 
+    /**
+     * Constructs an Event task with a given description, start and end time.
+     *
+     * @param description the description of task
+     * @param from the {@link LocalDateTime} that represents start time
+     * @param to the {@link LocalDateTime} that represents end time
+     * @param hasStartTime {@code true} if the start time includes specific time
+     *                     {@code false} if it does not
+     * @param hasEndTime {@code true} if the end time includes specific time
+     *      *            {@code false} if it does not
+     */
     public Event(String description, LocalDateTime from, LocalDateTime to,
                  boolean hasStartTime, boolean hasEndTime) {
         super(description);
@@ -42,6 +59,11 @@ public class Event extends Task{
         return hasEndTime;
     }
 
+    /**
+     * Returns a string representation of the event task for display
+     *
+     * @return example {@code [E][ ] play games (from: Sept 16 2025, 11:59PM to: Sept 17 2025, 11:59PM)}
+     */
     @Override
     public String toString() {
         String startStr = hasStartTime ? from.format(DT_FMT) : from.format(DATE_FMT);
@@ -49,6 +71,12 @@ public class Event extends Task{
         return "[E]" + super.toString() + " (from: " + startStr  + " to: " + endStr + ")";
     }
 
+    /**
+     * Returns string representation of event task for task saving.
+     * <p>
+     * Format: E|{doneFlag}|{description}|{fromStr}|{toStr}|hasStartTime|hasEndTime
+     * @return string representation of event task for persistence
+     */
     @Override
     public String toFileString() {
         String fromStr = hasStartTime ? from.format(SAVE_DT) : from.format(SAVE_DATE);

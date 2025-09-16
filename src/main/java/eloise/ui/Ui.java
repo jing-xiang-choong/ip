@@ -26,6 +26,9 @@ public class Ui {
         return s == null ? null : s.trim();
     }
 
+    /**
+     * Displays welcome message when program is running
+     */
     public void showWelcome() {
         box("""
             Hello, I'm Eloise! Your favourite productivity bot!
@@ -35,6 +38,9 @@ public class Ui {
             """);
     }
 
+    /**
+     * Display exit message when program is terminated
+     */
     public void showExit() {
         box("Bye! Hope to see you again!");
     }
@@ -47,28 +53,55 @@ public class Ui {
         }
     }
 
+    /**
+     * Display confirmation message for added tasks.
+     * Message contains added task and current list size.
+     * @param t the task that was added
+     * @param listSize current task list size after adding task
+     */
     public void showAdded(Task t, int listSize) {
         box("Got it. I've added this task:\n"
                 + " " + t + "\n"
                 + "Now you have " + listSize + " tasks in the list." );
     }
 
+    /**
+     * Displays confirmation message for removed tasks.
+     * Message contains removed task and current list size.
+     *
+     * @param t the task that was removed
+     * @param listSize current task list size after removing task
+     */
     public void showRemoved(Task t, int listSize) {
         box("No problem. I've removed this task:\n"
                 + " " + t + "\n"
                 + "Now you have " + listSize + " tasks in the list." );
     }
 
+    /**
+     * Display confirmation message after marking or unmarking tasks.
+     * Message displayed differs, depending on {@code mark}.
+     * @param t task that is being marked
+     * @param mark boolean to determine what message to display
+     */
     public void showMark(Task t, boolean mark) {
         box((mark
                 ? "Nice! I've marked this task as done:\n "
                 : "OK, I've marked this task as not done yet:\n ") + t);
     }
 
+    /**
+     * General message box to display messages to user
+     * @param msg messages to be displayed to user
+     */
     public void showMessage(String msg){
         box(msg);
     }
 
+    /**
+     * helper function to format messages
+     * @param msg message to be formatted and displayed
+     */
     private void box(String msg) {
         out.println(line);
         for (String line: msg.split("\\R")) {
