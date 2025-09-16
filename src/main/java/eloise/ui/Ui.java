@@ -3,6 +3,7 @@ package eloise.ui;
 import java.util.Scanner;
 import java.io.PrintStream;
 import eloise.task.Task;
+import eloise.task.TaskList;
 
 public class Ui {
     private static final String line  = "_".repeat(50);
@@ -67,6 +68,15 @@ public class Ui {
 
     public void showMessage(String msg){
         box(msg);
+    }
+
+    public void showMatches(TaskList matches) {
+        if (matches.isEmpty()) {
+            box("No matching items found.");
+        } else {
+            box("Here are the matching tasks in your list:\n"
+                    + matches.toString().stripTrailing());
+        }
     }
 
     private void box(String msg) {
