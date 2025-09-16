@@ -45,7 +45,7 @@ public final class Storage {
                 if (t != null) tasks.add(t);
             }
         } catch (FileNotFoundException e) {
-            //files does not exists, treated like first run
+            //files does not exist, treated like first run
         }
 
         return tasks;
@@ -76,7 +76,7 @@ public final class Storage {
     }
 
     /**
-     * Check if parent directory eg. data has been created
+     * Check if parent directory eg: data has been created
      * Else, create necessary directories
      */
     private void checkDataDir() {

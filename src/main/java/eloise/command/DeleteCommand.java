@@ -7,14 +7,26 @@ import eloise.exception.EloiseException;
 import eloise.parser.Parser;
 import eloise.exception.InvalidIndexException;
 
-public class DeleteCommand implements Command {
-    private final String userInput;
+/**
+ * Represents command that deletes a task from {@link TaskList}
+ * <p>
+ * Users are expected to use the following format to delete a task:
+ * delete <task OneBasedIndex>
+ */
+public record DeleteCommand(String userInput) implements Command {
 
-    public DeleteCommand(String userInput) {
-        this.userInput = userInput;
-    }
+    /**
+     * Parses task index into integer, uses index to remove task from {@link TaskList}.
+     * Updated task list is then saved to {@link Storage}, then {@link Ui} prints a confirmation
+     * message to the user.
+     *
+     * @param tasks   {@link TaskList} contains all current tasks
+     * @param storage {@link Storage} used to load and store tasks data
+     * @param ui      {@link Ui} used to interact with users through messages
+     * @throws EloiseException if task index is invalid or out of range.
+     */
     @Override
-    public void execute(TaskList tasks, Storage storage, Ui ui) throws EloiseException{
+    public void execute(TaskList tasks, Storage storage, Ui ui) throws EloiseException {
         String taskIdx = Parser.splitAtCommand(userInput, "delete");
 
         try {
@@ -28,7 +40,7 @@ public class DeleteCommand implements Command {
     }
 
     @Override
-    public boolean isExit(){
+    public boolean isExit() {
         return false;
     }
 }

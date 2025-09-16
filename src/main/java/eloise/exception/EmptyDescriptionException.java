@@ -7,10 +7,5 @@ public class EmptyDescriptionException extends EloiseException{
     }
 }
 
-//public class EmptyDescriptionException extends EloiseException{
-//    public EmptyDescriptionException (String missing, String example) {
-//        super("oops! I can't proceed without " + missing + "\n"
-//                + "eg. " + example);
-//    }
-//}
+
 

@@ -1,5 +1,6 @@
 package eloise.command;
 
+import eloise.task.Deadline;
 import eloise.task.TaskList;
 import eloise.task.Task;
 import eloise.task.Event;
@@ -11,16 +12,26 @@ import eloise.exception.EmptyDescriptionException;
 import eloise.parser.Parser;
 import eloise.parser.DateParser;
 
+/**
+ * Represents command that adds a {@link Event} task to task list.
+ * <p>
+ * Users are expected to use the following format to enter a {@link Event} task:
+ *     deadline <task description> /from <date and time> /to <date and time>
+ */
+public record EventCommand(String userInput) implements Command {
 
-public class EventCommand implements Command {
-    private final String userInput;
-
-    public EventCommand(String userInput) {
-        this.userInput = userInput;
-    }
-
+    /**
+     * Parses the task description, start and end time, adds it to {@link TaskList}.
+     * Task is then saved to {@link Storage}, then {@link Ui} prints a confirmation
+     * message to the user.
+     *
+     * @param tasks   {@link TaskList} used to add new event task to
+     * @param storage {@link Storage} used to persist updated task list
+     * @param ui      {@link Ui} used to display successful entry or potential error messages
+     * @throws EloiseException if input is invalid or if there are missing arguments.
+     */
     @Override
-    public void execute(TaskList tasks, Storage storage, Ui ui) throws EloiseException{
+    public void execute(TaskList tasks, Storage storage, Ui ui) throws EloiseException {
         String taskDesc = Parser.splitAtCommand(userInput, "event");
         String[] splitFrom = taskDesc.split("/from", 2);
 
@@ -61,8 +72,13 @@ public class EventCommand implements Command {
 
     }
 
+    /**
+     * Indicates that program does not terminate program.
+     *
+     * @return {@code false} since this command does not exit application
+     */
     @Override
-    public boolean isExit(){
+    public boolean isExit() {
         return false;
     }
 
