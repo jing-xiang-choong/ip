@@ -69,6 +69,10 @@ public class Parser {
             return new DeleteCommand(userInput);
         }
 
+        if (lower.startsWith("find")) {
+            return new FindCommand(userInput);
+        }
+
         throw new UnknownCommandException(userInput);
 
     }

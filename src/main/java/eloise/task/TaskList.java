@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import eloise.exception.EloiseException;
 import eloise.exception.InvalidIndexException;
+import eloise.parser.Parser;
 
 public class TaskList{
     private final List<Task> tasks;
@@ -74,6 +75,17 @@ public class TaskList{
 
     public List<Task> getAll() {
         return Collections.unmodifiableList(tasks);
+    }
+
+    public TaskList findTasks(String keyword) throws EloiseException {
+        TaskList matches = new TaskList();
+
+        for (Task t : tasks) {
+            if (t.getDescription().contains(keyword)) {
+                matches.addTask(t);
+            }
+        }
+        return matches;
     }
 
     // replaces list function
