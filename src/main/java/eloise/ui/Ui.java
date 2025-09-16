@@ -59,8 +59,8 @@ public class Ui {
                 + "Now you have " + listSize + " tasks in the list." );
     }
 
-    public void showMark(Task t, boolean mark) {
-        box((mark
+    public void showMark(Task t, boolean isMarked) {
+        box((isMarked
                 ? "Nice! I've marked this task as done:\n "
                 : "OK, I've marked this task as not done yet:\n ") + t);
     }

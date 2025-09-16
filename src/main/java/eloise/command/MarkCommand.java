@@ -10,11 +10,11 @@ import eloise.exception.InvalidIndexException;
 
 public class MarkCommand implements Command {
     private final String userInput;
-    private final boolean mark;
+    private final boolean isMarked;
 
-    public MarkCommand(String userInput, boolean mark) {
+    public MarkCommand(String userInput, boolean isMarked) {
         this.userInput = userInput;
-        this.mark = mark;
+        this.isMarked = isMarked;
     }
 
     @Override
@@ -28,9 +28,9 @@ public class MarkCommand implements Command {
 
         try {
             int index = Integer.parseInt(parts[1]);
-            Task t = mark ? tasks.mark(index) : tasks.unmark(index);
+            Task t = isMarked ? tasks.mark(index) : tasks.unmark(index);
             storage.save(tasks.getAll());
-            ui.showMark(t, mark);
+            ui.showMark(t, isMarked);
         } catch (NumberFormatException e) {
             throw new InvalidIndexException("Not a valid task number", tasks.size());
         }
