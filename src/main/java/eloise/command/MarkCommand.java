@@ -1,6 +1,5 @@
 package eloise.command;
 
-import eloise.task.Event;
 import eloise.task.TaskList;
 import eloise.task.Task;
 import eloise.ui.Ui;
@@ -11,15 +10,15 @@ import eloise.exception.InvalidIndexException;
 /**
  * Represents command to mark or unmark a task in {@link TaskList}
  *
- * Users are expected to use the following format to mark or unmark tasks:
+ * Users are expected to use the following format to isMarked or unmark tasks:
  *     mark 1, unmark 2
  *
  * @param userInput the raw command string input by users
- * @param mark {@code true} to mark specified task done
+ * @param isMarked {@code true} to isMarked specified task done
  *             {@code false} to unmark it
  */
-public record MarkCommand(String userInput, boolean mark) implements Command {
-
+public record MarkCommand(String userInput, boolean isMarked) implements Command {
+    
     /**
      * Parses the task description and task number, updates the task status in {@link TaskList}.
      * Task is then saved to {@link Storage}, then {@link Ui} prints a confirmation
@@ -41,9 +40,9 @@ public record MarkCommand(String userInput, boolean mark) implements Command {
 
         try {
             int index = Integer.parseInt(parts[1]);
-            Task t = mark ? tasks.mark(index) : tasks.unmark(index);
+            Task t = isMarked ? tasks.mark(index) : tasks.unmark(index);
             storage.save(tasks.getAll());
-            ui.showMark(t, mark);
+            ui.showMark(t, isMarked);
         } catch (NumberFormatException e) {
             throw new InvalidIndexException("Not a valid task number", tasks.size());
         }

@@ -78,14 +78,16 @@ public class Ui {
                 + "Now you have " + listSize + " tasks in the list." );
     }
 
+
     /**
      * Display confirmation message after marking or unmarking tasks.
-     * Message displayed differs, depending on {@code mark}.
+     * Message displayed differs, depending on {@code isMarked}.
      * @param t task that is being marked
-     * @param mark boolean to determine what message to display
+     * @param isMarked boolean to determine what message to display
      */
-    public void showMark(Task t, boolean mark) {
-        box((mark
+
+    public void showMark(Task t, boolean isMarked) {
+        box((isMarked
                 ? "Nice! I've marked this task as done:\n "
                 : "OK, I've marked this task as not done yet:\n ") + t);
     }
