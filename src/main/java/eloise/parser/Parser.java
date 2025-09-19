@@ -45,7 +45,7 @@ public class Parser {
             return new ListCommand();
         }
 
-        if (lower.startsWith("isMarked")) {
+        if (lower.startsWith("mark")) {
             return new MarkCommand(userInput, true);
         }
 
