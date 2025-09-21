@@ -28,7 +28,7 @@ test {
 }
 
 application {
-    mainClass.set("eloise.Eloise")
+    mainClass.set("eloise.Launcher")
 }
 
 shadowJar {

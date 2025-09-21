@@ -31,7 +31,7 @@ public class Ui {
      * Displays welcome message when program is running
      */
     public void showWelcome() {
-        box("""
+        showMessage("""
             Hello, I'm Eloise! Your favourite productivity bot!
             For Todo: enter "todo <task>"
             For Deadline: enter "deadline <task> /by <date/time>"
@@ -43,14 +43,15 @@ public class Ui {
      * Display exit message when program is terminated
      */
     public void showExit() {
-        box("Bye! Hope to see you again!");
+        showMessage("Bye! Hope to see you again!");
+
     }
 
     public void showList(String tasklist) {
         if (tasklist == null || tasklist.isBlank()) {
-            box("No items added yet.");
+            showMessage("No items added yet.");
         } else {
-            box(tasklist.stripTrailing());
+            showMessage(tasklist.stripTrailing());
         }
     }
 
@@ -61,7 +62,7 @@ public class Ui {
      * @param listSize current task list size after adding task
      */
     public void showAdded(Task t, int listSize) {
-        box("Got it. I've added this task:\n"
+        showMessage("Got it. I've added this task:\n"
                 + " " + t + "\n"
                 + "Now you have " + listSize + " tasks in the list." );
     }
@@ -74,7 +75,7 @@ public class Ui {
      * @param listSize current task list size after removing task
      */
     public void showRemoved(Task t, int listSize) {
-        box("No problem. I've removed this task:\n"
+        showMessage("No problem. I've removed this task:\n"
                 + " " + t + "\n"
                 + "Now you have " + listSize + " tasks in the list." );
     }
@@ -88,7 +89,7 @@ public class Ui {
      */
 
     public void showMark(Task t, boolean isMarked) {
-        box((isMarked
+        showMessage((isMarked
                 ? "Nice! I've marked this task as done:\n "
                 : "OK, I've marked this task as not done yet:\n ") + t);
     }
@@ -98,15 +99,19 @@ public class Ui {
      * @param msg messages to be displayed to user
      */
     public void showMessage(String msg){
-        box(msg);
+        out.println(line);
+        for (String line: msg.split("\\R")) {
+            out.println(" " + line);
+        }
+        out.println(line);
     }
 
 
     public void showMatches(TaskList matches) {
         if (matches.isEmpty()) {
-            box("No matching items found.");
+            showMessage("No matching items found.");
         } else {
-            box("Here are the matching tasks in your list:\n"
+            showMessage("Here are the matching tasks in your list:\n"
                     + matches.toString().stripTrailing());
         }
     }
