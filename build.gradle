@@ -1,7 +1,13 @@
 plugins {
     id 'java'
     id 'application'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
+
+javafx {
+    version = "17"  // match your JDK + JavaFX version
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
 }
 
 repositories {
