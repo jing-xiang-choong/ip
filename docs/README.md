@@ -3,7 +3,7 @@
 Eloise is a **personal task manager chatbot**.
 It helps you keep track of todos, deadlines, and events in a conversational way.
 
-![Screenshot of Eloise ChatBot](docs/Ui.png)
+![Screenshot of Eloise ChatBot](Ui.png)
 
 ## Features ✨
 
