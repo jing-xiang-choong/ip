@@ -35,6 +35,7 @@ public class TaskList{
     public Task addTask(Task t) throws EloiseException{
         if (t == null) throw new EloiseException("Cannot add a null task");
         tasks.add(t);
+        assert tasks.contains(t) : "TaskList must contain newly added task";
         return t;
     }
 
@@ -45,6 +46,8 @@ public class TaskList{
         }
         int iniSize = tasks.size();
         tasks.addAll(taskList);
+        assert tasks.size() == iniSize + taskList.size()
+                : "TaskList size must increase by number of added tasks";
         return tasks.size() - iniSize;
     }
 
@@ -59,12 +62,14 @@ public class TaskList{
     public Task mark(int idxOneBased) throws InvalidIndexException {
         Task t = getByOneBased(idxOneBased);
         t.mark();
+        assert t.getIsDone() : "Task should be marked as done";
         return t;
     }
 
     public Task unmark(int idxOneBased) throws InvalidIndexException {
         Task t = getByOneBased(idxOneBased);
         t.unmark();
+        assert !t.getIsDone() : "Task should be marked as not done";
         return t;
     }
 
