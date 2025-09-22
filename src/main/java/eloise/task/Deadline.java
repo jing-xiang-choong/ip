@@ -35,6 +35,11 @@ public class Deadline extends Task {
         this.hasTime = hasTime;
     }
 
+    @Override
+    public LocalDateTime getDateTime() {
+        return this.by;
+    }
+
     /**
      * Returns a string representation of the deadline task for display
      *
