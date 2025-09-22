@@ -19,6 +19,9 @@ import eloise.parser.DateParser;
  */
 public record DeadlineCommand(String userInput) implements Command {
 
+    private static final String DEADLINE_SEPARATOR = "/by";
+
+
     /**
      * Parses the task description and deadline, adds it to {@link TaskList}.
      * Task is then saved to {@link Storage}, then {@link Ui} prints a confirmation
@@ -32,13 +35,16 @@ public record DeadlineCommand(String userInput) implements Command {
     @Override
     public void execute(TaskList tasks, Storage storage, Ui ui) throws EloiseException {
         String taskDesc = Parser.splitAtCommand(userInput, "deadline");
-        String[] parts = taskDesc.split("/by", 2);
+        String[] parts = taskDesc.split(DEADLINE_SEPARATOR, 2);
+
         if (parts.length < 2) {
             throw new MissingArgumentException("'/by <when>'", "/by 2/9/2025");
         }
-        String task = parts[0].trim();
+
+        String description = parts[0].trim();
         String date = parts[1].trim();
-        if (task.isEmpty()) {
+
+        if (description.isEmpty()) {
             throw new EmptyDescriptionException("deadline");
         }
         if (date.isEmpty()) {
@@ -47,7 +53,7 @@ public record DeadlineCommand(String userInput) implements Command {
 
         DateParser.Result r = DateParser.parser(date);
 
-        Task t = new Deadline(task, r.dateTime, r.hasTime);
+        Task t = new Deadline(description, r.dateTime, r.hasTime);
         ui.showAdded(tasks.addTask(t), tasks.size());
         storage.save(tasks.getAll());
     }

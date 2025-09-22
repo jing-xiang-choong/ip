@@ -9,6 +9,16 @@ import eloise.command.*;
 
 public class Parser {
 
+    private static final String CMD_BYE = "bye";
+    private static final String CMD_LIST = "list";
+    private static final String CMD_MARK = "mark";
+    private static final String CMD_UNMARK = "unmark";
+    private static final String CMD_TODO = "todo";
+    private static final String CMD_DEADLINE = "deadline";
+    private static final String CMD_EVENT = "event";
+    private static final String CMD_DELETE = "delete";
+    private static final String CMD_FIND = "find";
+
     /**
      * Splits the raw command string by users into command and its description.
      *
@@ -34,47 +44,31 @@ public class Parser {
      * @return specific command to execute depending on user input
      * @throws EloiseException if command is invalid
      */
-    public static Command parse(String userInput) throws EloiseException{
+    public static Command parse(String userInput) throws EloiseException {
         assert userInput != null : "userInput should not be null";
         String lower = userInput.toLowerCase();
         //gives the actual input
-        if (lower.equals("bye")) {
+
+        if (lower.equals(CMD_BYE)) {
             return new ByeCommand();
-        }
-
-        if (lower.equals("list")) {
+        } else if (lower.equals(CMD_LIST)) {
             return new ListCommand();
-        }
-
-        if (lower.startsWith("mark")) {
+        } else if (lower.startsWith(CMD_MARK)) {
             return new MarkCommand(userInput, true);
-        }
-
-        if (lower.startsWith("unmark")) {
+        } else if (lower.startsWith(CMD_UNMARK)) {
             return new MarkCommand(userInput, false);
-        }
-
-        if (lower.startsWith("todo")) {
+        } else if (lower.startsWith(CMD_TODO)) {
             return new TodoCommand(userInput);
-        }
-
-        if (lower.startsWith("deadline")) {
+        } else if (lower.startsWith(CMD_DEADLINE)) {
             return new DeadlineCommand(userInput);
-        }
-
-        if (lower.startsWith("event")) {
+        } else if (lower.startsWith(CMD_EVENT)) {
             return new EventCommand(userInput);
-        }
-
-        if (lower.startsWith("delete")) {
+        } else if (lower.startsWith(CMD_DELETE)) {
             return new DeleteCommand(userInput);
-        }
-
-        if (lower.startsWith("find")) {
+        } else if (lower.startsWith(CMD_FIND)) {
             return new FindCommand(userInput);
         }
 
         throw new UnknownCommandException(userInput);
-
     }
 }
