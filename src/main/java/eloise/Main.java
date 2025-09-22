@@ -24,8 +24,14 @@ public class Main extends Application {
             Scene scene = new Scene(ap);
             stage.setScene(scene);
 
-            fxmlLoader.<MainWindow>getController().setEloise(eloise);  // inject the Duke instance
+            fxmlLoader.<MainWindow>getController().setEloise(eloise);  // inject the Eloise instance
             stage.setTitle("Eloise");
+
+            MainWindow controller = fxmlLoader.getController();
+            controller.setEloise(eloise);
+
+            controller.showWelcome();
+
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
