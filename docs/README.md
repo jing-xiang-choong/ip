@@ -1,30 +1,73 @@
-# Duke User Guide
+# Eloise User Guide
 
-// Update the title above to match the actual product name
+Eloise is a **personal task manager chatbot**.
+It helps you keep track of todos, deadlines, and events in a conversational way.
 
-// Product screenshot goes here
+![Screenshot of Eloise ChatBot](docs/Ui.png)
 
-// Product intro goes here
+## Features ✨
 
-## Adding deadlines
+- **Task Management**
+- **Deadlines & Events**
+- **GUI Support**
+- **Persistence**
 
-// Describe the action and its outcome.
 
-// Give examples of usage
+### Adding a Task
 
-Example: `keyword (optional arguments)`
+Use keywords such as 'todo', 'deadline' and 'event' to add your tasks!
 
-// A description of the expected outcome goes here
+Example: `deadline <your task> /by dd/MM/yyyy HHmm`
 
 ```
-expected output
+[D][ ] <your task> (by: dd/MM/yyyy HHmm)
 ```
 
-## Feature ABC
+### Check your task off
 
-// Feature details
+Use 'mark' or 'unmark' to check your tasks off after you're done!
+
+Example: `mark <task index>`
+
+```
+[D][X] <your task> (by: dd/MM/yyyy HHmm)
+```
+
+### Find your tasks 
+
+Use 'find' to find specific tasks!
+
+Example: `find book`
+
+```
+1. [D][ ] return book (by: dd/MM/yyyy HHmm)
+2. [D][ ] borrow book (by: dd/MM/yyyy HHmm)
+```
+
+### List and Sort your tasks
+
+Use 'list' to look at all your current tasks,
+and 'sort' to sort them into alphabetical 
+or chronological order (using 'sort date')
+
+Example: `list`
+
+```
+1. [D][ ] write book (by: dd/MM/yyyy HHmm)
+2. [T][ ] play games
+```
+
+Example: `sort`
+
+```
+1. [T][ ] play games
+2. [D][ ] write book (by: dd/MM/yyyy HHmm)
+```
 
 
-## Feature XYZ
+## Getting Started 🚀
 
-// Feature details
+1. Download the latest release from the [releases page](https://github.com/jing-xiang-choong/eloise/releases).
+2. Run the JAR file:
+   ```bash
+   java -jar eloise.jar
