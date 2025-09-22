@@ -18,6 +18,8 @@ public class Parser {
     private static final String CMD_EVENT = "event";
     private static final String CMD_DELETE = "delete";
     private static final String CMD_FIND = "find";
+    private static final String CMD_SORT = "sort";
+
 
     /**
      * Splits the raw command string by users into command and its description.
@@ -67,6 +69,10 @@ public class Parser {
             return new DeleteCommand(userInput);
         } else if (lower.startsWith(CMD_FIND)) {
             return new FindCommand(userInput);
+        } else if (lower.startsWith(CMD_SORT)) {
+            String[] parts = userInput.split("\\s+", 2);
+            String criteria = parts.length > 1 ? parts[1] : "desc";
+            return new SortCommand(criteria);
         }
 
         throw new UnknownCommandException(userInput);

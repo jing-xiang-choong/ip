@@ -1,5 +1,7 @@
 package eloise.task;
 
+import java.time.LocalDateTime;
+
 abstract public class Task {
     protected String description;
     protected boolean isDone;
@@ -27,6 +29,10 @@ abstract public class Task {
 
     public String getStatusIcon() {
         return (isDone ? "X" : " ");
+    }
+
+    public LocalDateTime getDateTime() {
+        return null;
     }
 
     @Override

@@ -3,9 +3,10 @@ package eloise.task;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import eloise.parser.DateParser;
 import eloise.exception.EloiseException;
 import eloise.exception.InvalidIndexException;
-import eloise.parser.Parser;
 
 public class TaskList{
     private final List<Task> tasks;
@@ -91,6 +92,15 @@ public class TaskList{
             }
         }
         return matches;
+    }
+
+    public void sortByDescription() {
+        tasks.sort(Comparator.comparing(Task::getDescription));
+    }
+
+    public void sortByDate() {
+        tasks.sort(Comparator.comparing(Task::getDateTime,
+                Comparator.nullsLast(Comparator.naturalOrder())));
     }
 
     // replaces list function

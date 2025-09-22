@@ -43,7 +43,8 @@ public class Event extends Task{
         this.hasEndTime = hasEndTime;
     }
 
-    public LocalDateTime getFrom() {
+    @Override
+    public LocalDateTime getDateTime() {
         return from;
     }
 
