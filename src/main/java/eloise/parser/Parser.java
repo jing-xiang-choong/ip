@@ -35,6 +35,7 @@ public class Parser {
      * @throws EloiseException if command is invalid
      */
     public static Command parse(String userInput) throws EloiseException{
+        assert userInput != null : "userInput should not be null";
         String lower = userInput.toLowerCase();
         //gives the actual input
         if (lower.equals("bye")) {

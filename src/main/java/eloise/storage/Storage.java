@@ -48,6 +48,8 @@ public final class Storage {
             //files does not exist, treated like first run
         }
 
+        assert tasks != null : "TaskList should not be null after loading";
+
         return tasks;
 
     }
