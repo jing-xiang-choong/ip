@@ -17,9 +17,24 @@ repositories {
 dependencies {
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.10.0'
     testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.10.0'
+
+    String javaFxVersion = '17.0.7'
+
+    implementation group: 'org.openjfx', name: 'javafx-base', version: javaFxVersion, classifier: 'win'
+    implementation group: 'org.openjfx', name: 'javafx-base', version: javaFxVersion, classifier: 'mac'
+    implementation group: 'org.openjfx', name: 'javafx-base', version: javaFxVersion, classifier: 'linux'
+    implementation group: 'org.openjfx', name: 'javafx-controls', version: javaFxVersion, classifier: 'win'
+    implementation group: 'org.openjfx', name: 'javafx-controls', version: javaFxVersion, classifier: 'mac'
+    implementation group: 'org.openjfx', name: 'javafx-controls', version: javaFxVersion, classifier: 'linux'
+    implementation group: 'org.openjfx', name: 'javafx-fxml', version: javaFxVersion, classifier: 'win'
+    implementation group: 'org.openjfx', name: 'javafx-fxml', version: javaFxVersion, classifier: 'mac'
+    implementation group: 'org.openjfx', name: 'javafx-fxml', version: javaFxVersion, classifier: 'linux'
+    implementation group: 'org.openjfx', name: 'javafx-graphics', version: javaFxVersion, classifier: 'win'
+    implementation group: 'org.openjfx', name: 'javafx-graphics', version: javaFxVersion, classifier: 'mac'
+    implementation group: 'org.openjfx', name: 'javafx-graphics', version: javaFxVersion, classifier: 'linux'
 }
 
-test {
+tasks.test {
     useJUnitPlatform()
 
     testLogging {
@@ -37,11 +52,14 @@ application {
     mainClass.set("eloise.Launcher")
 }
 
-shadowJar {
-    archiveBaseName = "Eloise"
-    archiveClassifier = null
+tasks.named('shadowJar') {
+    archiveBaseName.set("Eloise")
+    archiveClassifier.set(null) // makes it Eloise.jar instead of Eloise-all.jar
+    manifest {
+        attributes 'Main-Class': application.mainClass.get()
+    }
 }
 
-run{
+tasks.run{
     standardInput = System.in
 }
